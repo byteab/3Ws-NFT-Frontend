@@ -5,7 +5,7 @@ import { ethers } from "ethers"
 import { abi } from "./assets/abi.json"
 
 // Constants
-const TWITTER_HANDLE = "_buildspace"
+const TWITTER_HANDLE = "TheEhsanSarshar"
 const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`
 const OPENSEA_LINK = ""
 const TOTAL_MINT_COUNT = 50
@@ -28,6 +28,12 @@ const App = () => {
   const getTotalNFTs = async () => {
     const { ethereum } = window as any
     if (ethereum) {
+      if (ethereum.networkVersion !== "4") {
+        alert(
+          "This App will only work with testnet. please switch your Metamask to testnet"
+        )
+        return
+      }
       const provider = new ethers.providers.Web3Provider(ethereum)
       const signer = provider.getSigner()
       const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, signer)
@@ -42,6 +48,12 @@ const App = () => {
     const { ethereum } = window as any
 
     if (!ethereum) {
+      if (ethereum.networkVersion !== "4") {
+        alert(
+          "This App will only work with testnet. please switch your Metamask to testnet"
+        )
+        return
+      }
       console.log("Make sure you have metamask!")
       return
     } else {
@@ -56,6 +68,7 @@ const App = () => {
     if (accounts.length) {
       console.log("Found an authorized account: ", accounts[0])
       setCurrentAccount(accounts[0])
+      setupEventListener()
     } else {
       console.log("not authorized")
     }
@@ -66,6 +79,12 @@ const App = () => {
 
     try {
       if (ethereum) {
+        if (ethereum.networkVersion !== "4") {
+          alert(
+            "This App will only work with testnet. please switch your Metamask to testnet"
+          )
+          return
+        }
         const provider = new ethers.providers.Web3Provider(ethereum)
         const signer = provider.getSigner()
         const connectedContract = new ethers.Contract(
@@ -94,12 +113,6 @@ const App = () => {
     }
   }
 
-  React.useEffect(() => {
-    if (currentAccount) {
-      setupEventListener()
-    }
-  }, [currentAccount])
-
   const connectWallet = async () => {
     try {
       console.log("connectWallet")
@@ -115,6 +128,7 @@ const App = () => {
       const accounts = await ethereum.request({ method: "eth_requestAccounts" })
       console.log("connected ", accounts[0])
       setCurrentAccount(accounts[0])
+      setupEventListener()
     } catch (error) {
       console.log(error)
     }
@@ -191,7 +205,7 @@ const App = () => {
 
   if (tokenId) {
     openSeaAddress =
-      "https://testnets.opensea.io/assets/" + CONTRACT_ADDRESS + tokenId
+      "https://testnets.opensea.io/assets/" + CONTRACT_ADDRESS + "/" + tokenId
   }
 
   return (
@@ -207,7 +221,9 @@ const App = () => {
             {renderMintUI()}
             {openSeaAddress ? (
               <a target="_blank" href={openSeaAddress} className="opensea">
-                {`${tokenId || totalNFTs} / 100 NFT Minted, see your NFT in Opensea`}
+                {`${
+                  tokenId || totalNFTs
+                } / 100 NFT Minted, see your NFT in Opensea`}
               </a>
             ) : null}
           </div>
@@ -219,7 +235,7 @@ const App = () => {
             href={TWITTER_LINK}
             target="_blank"
             rel="noreferrer"
-          >{`built on @${TWITTER_HANDLE}`}</a>
+          >{`follow me @${TWITTER_HANDLE}`}</a>
         </div>
       </div>
     </div>
